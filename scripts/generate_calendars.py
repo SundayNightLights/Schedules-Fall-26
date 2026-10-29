@@ -94,11 +94,32 @@ def read_reference_uids(folder):
     return index
 
 
-def emit_event(uid, date, slot, diamond, team, opponent, side, phase, tentative=False):
-    start_hours = {1: (22, 0), 2: (22, 45), 3: (23, 30)}
-    hour, minute = start_hours[slot]
-    start = dt.datetime.combine(date, dt.time(hour, minute))
-    end = start + dt.timedelta(minutes=45)
+def parse_game_times(date, time_range):
+    pattern = r'^(\\d{1,2}:\\d{2})(?:\\s*(AM|PM))?\\s*[-–—]\\s*(\\d{1,2}:\\d{2})\\s*(AM|PM)$'
+    match = re.match(pattern, str(time_range).strip(), re.I)
+    if not match:
+        raise ValueError(f'Invalid game time range: {time_range!r}')
+    first, first_period, last, last_period = match.groups()
+    first_period = first_period or last_period
+
+    def parse(clock, period):
+        return dt.datetime.strptime(clock + ' ' + period.upper(), '%I:%M %p').time()
+
+    start = dt.datetime.combine(date, parse(first, first_period))
+    end = dt.datetime.combine(date, parse(last, last_period))
+    if end <= start:
+        end += dt.timedelta(days=1)
+    return start, end
+
+
+def emit_event(uid, date, slot, diamond, team, opponent, side, phase, tentative=False, time_range=None):
+    if time_range is not None:
+        start, end = parse_game_times(date, time_range)
+    else:
+        start_hours = {1: (22, 0), 2: (22, 45), 3: (23, 30)}
+        hour, minute = start_hours[slot]
+        start = dt.datetime.combine(date, dt.time(hour, minute))
+        end = start + dt.timedelta(minutes=45)
     start_s, end_s = start.strftime('%Y%m%dT%H%M%S'), end.strftime('%Y%m%dT%H%M%S')
     field = 'Near Field' if diamond == '1' else 'Far Field'
     suffix = ' (If Necessary)' if tentative else ''
@@ -144,8 +165,8 @@ def main():
             raise ValueError(f'Unknown team on row {r}: {away}, {home}')
         stamp = dt.datetime.combine(date, dt.time(*{1:(22,0),2:(22,45),3:(23,30)}[slot])).strftime('%Y%m%dT%H%M%S')
         uid = original_uids[r]
-        games[away].append(emit_event(uid, date, slot, diamond, away, home, 'Away', 'Regular Season'))
-        games[home].append(emit_event(uid, date, slot, diamond, home, away, 'Home', 'Regular Season'))
+        games[away].append(emit_event(uid, date, slot, diamond, away, home, 'Away', 'Regular Season', time_range=row['C']))
+        games[home].append(emit_event(uid, date, slot, diamond, home, away, 'Home', 'Regular Season', time_range=row['C']))
         count += 1
     if count != 60:
         raise ValueError(f'Expected 60 regular-season games; found {count}. Check source workbook.')
