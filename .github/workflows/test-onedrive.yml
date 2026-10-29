@@ -1,0 +1,66 @@
+
+name: Test OneDrive Connection
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test-onedrive:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Test workbook download
+        env:
+          ONEDRIVE_SHARE_URL: ${{ secrets.ONEDRIVE_SHARE_URL }}
+        run: |
+          python3 - <<'PY'
+          import os
+          import urllib.request
+          import urllib.parse
+          import base64
+          import zipfile
+          import io
+
+          url = os.environ["ONEDRIVE_SHARE_URL"]
+
+          encoded = base64.urlsafe_b64encode(
+              url.encode("utf-8")
+          ).decode("ascii").rstrip("=")
+
+          api_url = (
+              "https://api.onedrive.com/v1.0/shares/u!"
+              + encoded
+              + "/root/content"
+          )
+
+          try:
+              request = urllib.request.Request(
+                  api_url,
+                  headers={"User-Agent": "SNL-Calendar-Sync"}
+              )
+
+              with urllib.request.urlopen(
+                  request, timeout=30
+              ) as response:
+                  data = response.read()
+
+              if not zipfile.is_zipfile(io.BytesIO(data)):
+                  raise ValueError(
+                      "Response is not an Excel workbook"
+                  )
+
+              with zipfile.ZipFile(io.BytesIO(data)) as book:
+                  if "xl/workbook.xml" not in book.namelist():
+                      raise ValueError(
+                          "Downloaded file is not a valid XLSX"
+                      )
+
+              print("SUCCESS: SNL workbook downloaded!")
+
+          except Exception as error:
+              print("FAILED:", type(error).__name__)
+              raise SystemExit(1)
+          PY
