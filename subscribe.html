@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Subscribe to Team Calendar | Sunday Night Lights</title>
+<meta name="description" content="Subscribe to a Sunday Night Lights team schedule with Google Calendar, Apple Calendar, or Outlook.">
+<style>
+:root{color-scheme:light;--ink:#192536;--muted:#667386;--line:#dce2e9;--dark:#25292e;--accent:#176d94;--bg:#f4f6f8}*{box-sizing:border-box}body{margin:0;background:var(--bg);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--ink)}.wrap{max-width:740px;margin:0 auto;padding:34px 18px 70px}.brand{text-align:center;margin-bottom:25px}.brand .mark{display:inline-grid;place-items:center;width:55px;height:55px;border-radius:15px;background:var(--dark);color:#fff;font-size:28px}.brand h1{font-size:29px;line-height:1.15;margin:14px 0 5px}.brand p{margin:0;color:var(--muted)}.panel{background:white;border:1px solid var(--line);border-radius:16px;padding:25px;box-shadow:0 7px 25px rgba(20,32,50,.05)}label{font-weight:700;display:block;margin-bottom:8px}select{width:100%;font:inherit;padding:13px;border:1px solid #aeb8c4;border-radius:9px;background:white;color:var(--ink)}.intro{color:var(--muted);margin:12px 0 24px}.apps{display:grid;gap:12px}.app{border:1px solid var(--line);border-radius:12px;padding:16px;display:grid;grid-template-columns:44px 1fr;gap:12px;align-items:start}.icon{display:grid;place-items:center;width:42px;height:42px;background:#eff3f6;border-radius:10px;font-size:21px}.app h2{font-size:17px;margin:0 0 4px}.app p{font-size:14px;color:var(--muted);margin:0 0 11px}.btn{display:inline-block;background:var(--dark);color:white;text-decoration:none;border:0;border-radius:8px;padding:10px 14px;font-weight:700;font:inherit;cursor:pointer}.btn:focus-visible,select:focus-visible{outline:3px solid #88c5e8;outline-offset:2px}.btn:hover{background:#40464d}.small{font-size:13px;color:var(--muted)}.urlbox{margin-top:24px;padding-top:22px;border-top:1px solid var(--line)}.urlrow{display:flex;gap:8px}.urlrow input{min-width:0;flex:1;border:1px solid #b9c3cd;border-radius:8px;padding:11px;font-size:13px;background:#f9fafb;color:#273445}.note{margin-top:16px;padding:13px 15px;background:#f1f6f8;border-left:3px solid var(--accent);font-size:14px;border-radius:5px}.footer{text-align:center;color:var(--muted);font-size:13px;margin-top:22px}ol{margin:9px 0 0;padding-left:21px;color:#435064;font-size:14px}li{margin:3px 0}details{margin-top:11px}summary{cursor:pointer;font-size:14px;font-weight:700;color:#245d7b}@media(max-width:480px){.wrap{padding-top:24px}.panel{padding:18px}.brand h1{font-size:25px}.urlrow{flex-direction:column}.btn{width:100%;text-align:center}}
+</style>
+</head>
+<body><main class="wrap"><header class="brand"><div class="mark" aria-hidden="true">⚾</div><h1>Sunday Night Lights</h1><p>Live team calendar subscriptions</p></header>
+<section class="panel"><label for="team">Select your team</label><select id="team">
+<option value="Buffaloes">Buffaloes</option><option value="IHT">IHT</option><option value="MORSL">MORSL</option><option value="Outcasts">Outcasts</option><option value="Pacific Maul">Pacific Maul</option><option value="Toronto Raccoons">Toronto Raccoons</option></select>
+<p class="intro">Subscribe once to see schedule changes as your calendar app refreshes the feed. Updates aren't necessarily immediate.</p>
+<div class="apps">
+<article class="app"><div class="icon" aria-hidden="true">🗓️</div><div><h2>Google Calendar</h2><p>Google Calendar requires adding a calendar by URL on its website (not directly in the mobile app).</p><a class="btn" href="https://calendar.google.com/calendar/u/0/r/settings/addbyurl" target="_blank" rel="noopener noreferrer">Open Google Calendar</a><details><summary>How to subscribe</summary><ol><li>Copy the live calendar URL below.</li><li>Open Google Calendar on the web and choose <strong>Other calendars → + → From URL</strong>.</li><li>Paste the URL and select <strong>Add calendar</strong>.</li></ol></details></div></article>
+<article class="app"><div class="icon" aria-hidden="true">🍎</div><div><h2>Apple Calendar</h2><p>Open the subscription link on an Apple device, or add the URL through Calendar's subscription options.</p><a class="btn" id="apple" href="#">Subscribe with Apple Calendar</a><details><summary>Manual instructions</summary><ol><li>Copy the live calendar URL below.</li><li>On iPhone, open Calendar, tap <strong>Calendars → Add Calendar → Add Subscription Calendar</strong>.</li><li>Paste the URL and follow the prompts.</li></ol></details></div></article>
+<article class="app"><div class="icon" aria-hidden="true">✉️</div><div><h2>Outlook</h2><p>Add the team feed using Outlook on the web.</p><a class="btn" href="https://outlook.live.com/calendar/" target="_blank" rel="noopener noreferrer">Open Outlook Calendar</a><details><summary>How to subscribe</summary><ol><li>Copy the live calendar URL below.</li><li>In Outlook Calendar, select <strong>Add calendar → Subscribe from web</strong>.</li><li>Paste the URL, name your calendar and select <strong>Import</strong>.</li></ol></details></div></article>
+</div>
+<div class="urlbox"><label for="feed">Live subscription URL</label><div class="urlrow"><input id="feed" type="text" readonly aria-label="Team calendar subscription URL"><button class="btn" id="copy" type="button">Copy URL</button></div><p class="small">Use this URL when your calendar app asks for an internet calendar or subscription feed.</p></div>
+<div class="note"><strong>Download vs subscribe:</strong> Downloading an .ics file imports a one-time copy. Subscribing by URL lets your calendar app check for schedule updates. The refresh frequency is controlled by your calendar provider.</div>
+</section><p class="footer">Sunday Night Lights · Fall 2026–27</p></main>
+<script>
+(function(){
+'use strict';
+const names={'Buffaloes':'SNL_Buffaloes_Fall_2026-27.ics','IHT':'SNL_IHT_Fall_2026-27.ics','MORSL':'SNL_MORSL_Fall_2026-27.ics','Outcasts':'SNL_Outcasts_Fall_2026-27.ics','Pacific Maul':'SNL_Pacific_Maul_Fall_2026-27.ics','Toronto Raccoons':'SNL_Toronto_Raccoons_Fall_2026-27.ics'};
+const base='https://sundaynightlights.github.io/Schedules-Fall-26/';
+const team=document.getElementById('team'), feed=document.getElementById('feed'), apple=document.getElementById('apple'),copy=document.getElementById('copy');
+const params=new URLSearchParams(location.search);const requested=params.get('team');if(Object.prototype.hasOwnProperty.call(names,requested))team.value=requested;
+function update(){const url=base+names[team.value];feed.value=url;apple.href='webcal://'+url.replace(/^https?:\/\//,'');const u=new URL(location.href);u.searchParams.set('team',team.value);history.replaceState(null,'',u);copy.textContent='Copy URL';}
+team.addEventListener('change',update);
+copy.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(feed.value);copy.textContent='Copied!';}catch(e){feed.focus();feed.select();copy.textContent='Select & copy';}});
+update();
+})();
+</script></body></html>
