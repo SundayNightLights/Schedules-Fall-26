@@ -95,7 +95,7 @@ def read_reference_uids(folder):
 
 
 def parse_game_times(date, time_range):
-    pattern = r'^(\\d{1,2}:\\d{2})(?:\\s*(AM|PM))?\\s*[-–—]\\s*(\\d{1,2}:\\d{2})\\s*(AM|PM)$'
+    pattern = r'^(\d{1,2}:\d{2})(?:\s*(AM|PM))?\s*[-–—]\s*(\d{1,2}:\d{2})\s*(AM|PM)$'
     match = re.match(pattern, str(time_range).strip(), re.I)
     if not match:
         raise ValueError(f'Invalid game time range: {time_range!r}')
