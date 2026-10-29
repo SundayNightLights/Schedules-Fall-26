@@ -7,6 +7,8 @@ on:
 
 permissions:
   contents: read
+  pages: write
+  id-token: write
 
 concurrency:
   group: snl-calendar-sync
@@ -15,18 +17,56 @@ concurrency:
 jobs:
   sync:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Confirm workflow started
-        run: echo "SNL calendar synchronization started"
+      - name: Install dependencies
+        run: python -m pip install msal requests openpyxl
 
-      - name: Install Microsoft Graph dependencies
-        run: python -m pip install msal requests
-
-      - name: Test OneDrive workbook download
+      - name: Download Excel workbook from OneDrive
         env:
           MS_CLIENT_ID: ${{ secrets.MS_CLIENT_ID }}
           MSAL_CACHE: ${{ secrets.MSAL_CACHE }}
         run: python scripts/download_onedrive.py
+
+      - name: Generate six team calendars
+        run: |
+          python scripts/generate_calendars.py \
+            "SNL Fall 26.xlsx" \
+            --output public \
+            --reference reference
+
+      - name: Create calendar website
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          files = sorted(Path("public").glob("*.ics"))
+          if len(files) != 6:
+              raise SystemExit(f"Expected 6 calendars, found {len(files)}")
+          links = "\n".join(
+              f'<li><a href="{f.name}">{f.stem.replace("_", " ")}</a></li>'
+              for f in files
+          )
+          Path("public/index.html").write_text(
+              "<!doctype html><html><head><meta charset='utf-8'>"
+              "<title>Sunday Night Lights Calendars</title></head>"
+              "<body><h1>Sunday Night Lights — Fall 2026–27</h1>"
+              "<p>Subscribe to your team's calendar:</p><ul>"
+              + links + "</ul></body></html>",
+              encoding="utf-8",
+          )
+          PY
+
+      - name: Upload GitHub Pages files
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+
+      - name: Publish calendars
+        id: deployment
+        uses: actions/deploy-pages@v4
