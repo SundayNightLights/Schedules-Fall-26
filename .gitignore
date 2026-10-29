@@ -1,2 +1,5 @@
 
 .snl-auth/
+
+__pycache__/
+*.pyc
